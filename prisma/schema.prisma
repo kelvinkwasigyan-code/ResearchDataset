@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  datasets     Dataset[]
+}
+
+model Dataset {
+  id            String           @id @default(cuid())
+  slug          String           @unique
+  title         String
+  summary       String
+  description   String
+  authors       String           // Comma-separated or JSON array of author names
+  license       String           @default("CC-BY-4.0")
+  visibility    String           @default("PUBLIC") // "PUBLIC" | "PRIVATE"
+  viewCount     Int              @default(0)
+  downloadCount Int              @default(0)
+  ownerId       String
+  owner         User             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  versions      DatasetVersion[]
+  tags          DatasetTag[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([visibility, createdAt])
+}
+
+model DatasetVersion {
+  id            String        @id @default(cuid())
+  datasetId     String
+  dataset       Dataset       @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  versionNumber Int
+  changelog     String        @default("Initial release")
+  totalBytes    BigInt        @default(0)
+  files         DatasetFile[]
+  publishedAt   DateTime      @default(now())
+
+  @@unique([datasetId, versionNumber])
+}
+
+model DatasetFile {
+  id           String         @id @default(cuid())
+  versionId    String
+  version      DatasetVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  originalName String
+  storageKey   String         @unique
+  mimeType     String
+  extension    String
+  sizeBytes    Int
+  sha256       String
+  createdAt    DateTime       @default(now())
+
+  @@index([versionId])
+}
+
+model Tag {
+  id       String       @id @default(cuid())
+  name     String       @unique
+  datasets DatasetTag[]
+}
+
+model DatasetTag {
+  datasetId String
+  tagId     String
+  dataset   Dataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([datasetId, tagId])
+}
