@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Just Dataset Hub — Local-First Dataset Repository",
+  title: "Just Research — Local-First Dataset Repository",
   description:
     "Browse, version, preview, cite, and download research datasets locally.",
 };
@@ -33,7 +33,7 @@ export default async function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-slate-50 text-slate-900">
+      <body className="min-h-full flex flex-col bg-[#fafbfc] text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
         <Navbar user={session} />
         <main className="flex-1">{children}</main>
         <Footer isAuthenticated={Boolean(session)} />

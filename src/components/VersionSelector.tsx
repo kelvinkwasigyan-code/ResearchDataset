@@ -49,11 +49,11 @@ export function VersionSelector({
   }
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white shadow-xs">
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 px-5 py-4">
+    <section className="overflow-hidden rounded-2xl border border-slate-200/85 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200/80 px-5 py-4">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-            <History className="h-4 w-4 text-indigo-600" />
+          <div className="flex items-center gap-2 text-sm font-semibold text-slate-950">
+            <History className="h-4 w-4 text-slate-500" />
             <span>Version</span>
           </div>
           <div className="flex flex-wrap items-center gap-1.5">
@@ -64,10 +64,10 @@ export function VersionSelector({
                   key={v.id}
                   type="button"
                   onClick={() => onSelectVersion(v.versionNumber)}
-                  className={`rounded-lg px-3 py-1 text-xs font-semibold transition-colors cursor-pointer ${
+                  className={`rounded-lg px-3 py-1 text-xs font-semibold tabular-nums transition-colors cursor-pointer ${
                     active
-                      ? "bg-indigo-600 text-white shadow-xs"
-                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                      ? "bg-slate-950 text-white shadow-2xs"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200/80 hover:text-slate-950"
                   }`}
                 >
                   v{v.versionNumber}
@@ -79,9 +79,9 @@ export function VersionSelector({
 
         <a
           href={`/api/datasets/${slug}/versions/${selectedVersion.versionNumber}/download`}
-          className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-3.5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-indigo-700 transition-colors"
+          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-800 shadow-2xs hover:border-slate-300 hover:bg-slate-50 transition-colors tabular-nums"
         >
-          <FileArchive className="h-4 w-4" />
+          <FileArchive className="h-4 w-4 text-indigo-600" />
           Download v{selectedVersion.versionNumber} (.zip ·{" "}
           {formatBytes(selectedVersion.totalBytes)})
         </a>

@@ -34,7 +34,7 @@ export function formatApaCitation(input: CitationInput): string {
     authorText = `${formatted.slice(0, -1).join(", ")}, & ${formatted[formatted.length - 1]}`;
   }
 
-  return `${authorText} (${year}). ${input.title} (Version ${input.versionNumber}) [Dataset]. Just Dataset Hub. ${input.url}`;
+  return `${authorText} (${year}). ${input.title} (Version ${input.versionNumber}) [Dataset]. Just Research. ${input.url}`;
 }
 
 export function formatBibtexCitation(input: CitationInput): string {
@@ -52,7 +52,7 @@ export function formatBibtexCitation(input: CitationInput): string {
   title        = {${input.title}},
   year         = {${year}},
   version      = {v${input.versionNumber}},
-  publisher    = {Just Dataset Hub},
+  publisher    = {Just Research},
   url          = {${input.url}}
 }`;
 }

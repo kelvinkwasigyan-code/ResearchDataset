@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { Filter, Search, X } from "lucide-react";
+import { ArrowUpDown, Search, SlidersHorizontal, X } from "lucide-react";
 import { FILE_TYPE_FILTERS, LICENSE_OPTIONS } from "@/lib/format";
 
 interface SearchFiltersProps {
@@ -45,13 +45,13 @@ export function SearchBarAndSort({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
       <form onSubmit={handleSubmit} className="relative flex-1">
-        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search datasets by title, description, author, or tag..."
-          className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-10 pr-24 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+          className="w-full rounded-xl border border-slate-200/90 bg-white py-3 pl-11 pr-28 text-sm text-slate-950 shadow-[0_1px_2px_rgba(15,23,42,0.04)] placeholder:text-slate-400 hover:border-slate-300 focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all"
         />
         {query && (
           <button
@@ -60,7 +60,7 @@ export function SearchBarAndSort({
               setQuery("");
               updateParams({ q: null });
             }}
-            className="absolute right-20 top-1/2 -translate-y-1/2 rounded p-1 text-slate-400 hover:text-slate-600 cursor-pointer"
+            className="absolute right-24 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors cursor-pointer"
             aria-label="Clear search"
           >
             <X className="h-4 w-4" />
@@ -68,21 +68,22 @@ export function SearchBarAndSort({
         )}
         <button
           type="submit"
-          className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 transition-colors cursor-pointer"
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-slate-950 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-slate-800 transition-colors cursor-pointer"
         >
           Search
         </button>
       </form>
 
-      <div className="flex items-center gap-2 shrink-0">
+      <div className="flex items-center gap-2 shrink-0 rounded-xl border border-slate-200/90 bg-white px-3 py-1.5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+        <ArrowUpDown className="h-3.5 w-3.5 text-slate-400" />
         <label htmlFor="sort-select" className="text-xs font-medium text-slate-500">
-          Sort by
+          Sort
         </label>
         <select
           id="sort-select"
           value={initialSort}
           onChange={(e) => updateParams({ sort: e.target.value })}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+          className="bg-transparent py-1 pr-1 text-sm font-semibold text-slate-900 focus:outline-none cursor-pointer"
         >
           <option value="newest">Newest</option>
           <option value="downloads">Most Downloaded</option>
@@ -120,30 +121,34 @@ export function SearchFilters({
   }
 
   const hasFilters = Boolean(
-    initialTag || initialExt || initialLicense || initialMine || searchParams.get("q")
+    initialTag ||
+      initialExt ||
+      initialLicense ||
+      initialMine ||
+      searchParams.get("q")
   );
 
   return (
-    <aside className="space-y-6 rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-          <Filter className="h-4 w-4 text-indigo-600" />
+    <aside className="lg:sticky lg:top-24 rounded-2xl border border-slate-200/85 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] divide-y divide-slate-100">
+      <div className="flex items-center justify-between pb-4">
+        <div className="flex items-center gap-2 text-sm font-semibold text-slate-950">
+          <SlidersHorizontal className="h-4 w-4 text-slate-500" />
           <span>Filters</span>
         </div>
         {hasFilters && (
           <button
             type="button"
             onClick={clearAll}
-            className="text-xs font-medium text-indigo-600 hover:text-indigo-800 cursor-pointer"
+            className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer"
           >
-            Reset all
+            Reset
           </button>
         )}
       </div>
 
       {/* License filter */}
-      <div>
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+      <div className="py-4">
+        <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
           License
         </h3>
         <div className="mt-2.5 space-y-1">
@@ -154,14 +159,14 @@ export function SearchFilters({
                 key={lic}
                 type="button"
                 onClick={() => toggleParam("license", lic)}
-                className={`flex w-full items-center justify-between rounded-md px-2.5 py-1.5 text-left text-sm transition-colors cursor-pointer ${
+                className={`flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs font-medium transition-colors cursor-pointer ${
                   active
-                    ? "bg-indigo-50 font-medium text-indigo-700"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    ? "bg-slate-950 text-white"
+                    : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-950"
                 }`}
               >
                 <span>{lic}</span>
-                {active && <X className="h-3.5 w-3.5" />}
+                {active && <X className="h-3.5 w-3.5 text-slate-300" />}
               </button>
             );
           })}
@@ -169,9 +174,9 @@ export function SearchFilters({
       </div>
 
       {/* File Type filter */}
-      <div>
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-          File Type
+      <div className="py-4">
+        <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+          Format
         </h3>
         <div className="mt-2.5 flex flex-wrap gap-1.5">
           {FILE_TYPE_FILTERS.map((ext) => {
@@ -181,10 +186,10 @@ export function SearchFilters({
                 key={ext}
                 type="button"
                 onClick={() => toggleParam("ext", ext)}
-                className={`rounded-md px-2.5 py-1 text-xs font-medium uppercase transition-colors cursor-pointer ${
+                className={`rounded-lg px-2.5 py-1 font-mono text-[11px] font-semibold uppercase transition-colors cursor-pointer ${
                   active
-                    ? "bg-indigo-600 text-white"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    ? "bg-slate-950 text-white shadow-2xs"
+                    : "border border-slate-200/80 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-slate-100 hover:text-slate-950"
                 }`}
               >
                 .{ext}
@@ -196,9 +201,9 @@ export function SearchFilters({
 
       {/* Tags filter */}
       {availableTags.length > 0 && (
-        <div>
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Tags
+        <div className="pt-4">
+          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            Topics
           </h3>
           <div className="mt-2.5 flex flex-wrap gap-1.5">
             {availableTags.map((t) => {
@@ -208,15 +213,15 @@ export function SearchFilters({
                   key={t.name}
                   type="button"
                   onClick={() => toggleParam("tag", t.name)}
-                  className={`inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer ${
                     active
-                      ? "bg-indigo-600 text-white"
-                      : "bg-slate-100 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700"
+                      ? "bg-indigo-600 text-white shadow-2xs"
+                      : "border border-slate-200/80 bg-slate-50 text-slate-700 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700"
                   }`}
                 >
                   <span>{t.name}</span>
                   <span
-                    className={`text-[10px] ${
+                    className={`text-[10px] tabular-nums ${
                       active ? "text-indigo-200" : "text-slate-400"
                     }`}
                   >

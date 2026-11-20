@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { AlertCircle, Database, Loader2 } from "lucide-react";
+import { AlertCircle, FlaskConical, Loader2 } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -38,17 +38,20 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-md flex-col justify-center px-4 py-16 sm:px-6">
-      <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-xs">
+    <div className="relative flex min-h-[calc(100vh-12rem)] flex-col justify-center px-4 py-14 sm:px-6">
+      <div className="bg-grid-pattern pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,white,transparent_75%)]" />
+      <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-2xl border border-slate-200/85 bg-white shadow-[0_8px_30px_rgb(15,23,42,0.06)]">
+        <div className="h-1 bg-gradient-to-r from-slate-900 via-indigo-600 to-indigo-400" />
+        <div className="p-8">
         <div className="flex flex-col items-center text-center">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm">
-            <Database className="h-6 w-6" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 text-white shadow-sm">
+            <FlaskConical className="h-5 w-5" />
           </div>
-          <h1 className="mt-4 text-xl font-bold text-slate-900">
-            Create your account
+          <h1 className="mt-4 text-xl font-bold tracking-tight text-slate-950">
+            Create your Just Research account
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Start hosting and versioning your datasets locally.
+            Start hosting, versioning, and sharing research datasets.
           </p>
         </div>
 
@@ -124,7 +127,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50 transition-colors cursor-pointer"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 disabled:opacity-50 transition-all cursor-pointer"
           >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
             Create account
@@ -140,6 +143,7 @@ export default function RegisterPage() {
             Sign in
           </Link>
         </p>
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Database, HardDrive, ShieldCheck } from "lucide-react";
+import { FlaskConical, HardDrive, ShieldCheck } from "lucide-react";
 
 interface FooterProps {
   isAuthenticated: boolean;
@@ -9,20 +9,20 @@ export function Footer({ isAuthenticated }: FooterProps) {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-16 border-t border-slate-200 bg-white text-slate-600">
+    <footer className="mt-20 border-t border-slate-200/80 bg-white text-slate-600">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Brand */}
           <div className="md:col-span-1 space-y-3">
             <Link
               href="/"
-              className="inline-flex items-center gap-2.5 text-slate-900 hover:text-indigo-600 transition-colors"
+              className="group inline-flex items-center gap-2.5 text-slate-950 transition-colors"
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-xs">
-                <Database className="h-4 w-4" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 text-white shadow-xs">
+                <FlaskConical className="h-4 w-4" />
               </div>
-              <span className="text-base font-semibold tracking-tight">
-                Just Dataset Hub
+              <span className="text-base font-bold tracking-tight">
+                Just Research
               </span>
             </Link>
             <p className="text-xs leading-relaxed text-slate-500">
@@ -181,7 +181,7 @@ export function Footer({ isAuthenticated }: FooterProps) {
 
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-slate-100 pt-6 text-xs text-slate-500 sm:flex-row">
-          <p>&copy; {year} Just Dataset Hub. Local-first open data repository.</p>
+          <p>&copy; {year} Just Research. Local-first open data repository.</p>
           <p>Built with Next.js, TypeScript, Prisma &amp; SQLite</p>
         </div>
       </div>

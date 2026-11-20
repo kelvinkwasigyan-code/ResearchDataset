@@ -121,7 +121,7 @@ async function storeFilesForVersion(
 }
 
 async function main() {
-  console.log("Seeding Dataset Hub...");
+  console.log("Seeding Just Research...");
 
   const passwordHash = await bcrypt.hash("password123", 10);
   const demoUser = await prisma.user.upsert({

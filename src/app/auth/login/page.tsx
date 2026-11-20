@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { AlertCircle, Database, Loader2 } from "lucide-react";
+import { AlertCircle, FlaskConical, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,17 +37,20 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-md flex-col justify-center px-4 py-16 sm:px-6">
-      <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-xs">
+    <div className="relative flex min-h-[calc(100vh-12rem)] flex-col justify-center px-4 py-14 sm:px-6">
+      <div className="bg-grid-pattern pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,white,transparent_75%)]" />
+      <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-2xl border border-slate-200/85 bg-white shadow-[0_8px_30px_rgb(15,23,42,0.06)]">
+        <div className="h-1 bg-gradient-to-r from-slate-900 via-indigo-600 to-indigo-400" />
+        <div className="p-8">
         <div className="flex flex-col items-center text-center">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm">
-            <Database className="h-6 w-6" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 text-white shadow-sm">
+            <FlaskConical className="h-5 w-5" />
           </div>
-          <h1 className="mt-4 text-xl font-bold text-slate-900">
-            Sign in to Just Dataset Hub
+          <h1 className="mt-4 text-xl font-bold tracking-tight text-slate-950">
+            Sign in to Just Research
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Publish, version, and manage your datasets.
+            Publish, version, and manage your research datasets.
           </p>
         </div>
 
@@ -100,16 +103,30 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50 transition-colors cursor-pointer"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 disabled:opacity-50 transition-all cursor-pointer"
           >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
             Sign in
           </button>
         </form>
 
-        <div className="mt-6 rounded-lg bg-slate-50 p-3 text-xs text-slate-600 border border-slate-200">
-          <p className="font-semibold text-slate-700">Seeded Demo Account</p>
-          <p className="mt-0.5 font-mono">demo@datasethub.local / password123</p>
+        <div className="mt-6 flex items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-slate-50/80 p-3.5 text-xs text-slate-600">
+          <div>
+            <p className="font-semibold text-slate-800">Demo Account</p>
+            <p className="mt-0.5 font-mono text-[11px] text-slate-500">
+              demo@datasethub.local / password123
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setEmail("demo@datasethub.local");
+              setPassword("password123");
+            }}
+            className="shrink-0 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-colors cursor-pointer"
+          >
+            Fill
+          </button>
         </div>
 
         <p className="mt-5 text-center text-sm text-slate-600">
@@ -121,6 +138,7 @@ export default function LoginPage() {
             Create an account
           </Link>
         </p>
+        </div>
       </div>
     </div>
   );

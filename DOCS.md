@@ -1,13 +1,13 @@
-# Just Dataset Hub — Project Documentation
+# Just Research — Project Documentation
 
 > **Audience:** Developers and AI coding agents collaborating on this repository.  
-> **Project:** `dataset-hub` (**Just Dataset Hub**) — a local-first research dataset repository for publishing, versioning, previewing, citing, importing, and downloading datasets.
+> **Project:** `dataset-hub` (**Just Research**) — a local-first research dataset repository for publishing, versioning, previewing, citing, importing, and downloading datasets.
 
 ---
 
 ## 1. What We Are Building
 
-**Just Dataset Hub** is a full-stack web application modeled after research dataset repositories (like Zenodo / Mendeley Data / Kaggle Datasets), designed to run locally with zero external cloud dependencies while keeping clean abstractions (Prisma + `StorageProvider`) for future cloud migration.
+**Just Research** is a full-stack web application modeled after research dataset repositories (like Zenodo / Mendeley Data / Kaggle Datasets), designed to run locally with zero external cloud dependencies while keeping clean abstractions (Prisma + `StorageProvider`) for future cloud migration.
 
 ### Core Capabilities
 - **Dataset Publishing & Versioning:** Users upload multi-file datasets as immutable versions (`v1`, `v2`, …) with release changelogs, Markdown descriptions, authors, tags, license selection, and `PUBLIC` / `PRIVATE` visibility.

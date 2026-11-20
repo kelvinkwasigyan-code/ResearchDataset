@@ -108,8 +108,10 @@ export function DatasetDetailClient({
   return (
     <div className="space-y-6">
       {/* Header Card */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <div className="overflow-hidden rounded-2xl border border-slate-200/85 bg-white shadow-[0_1px_3px_rgba(15,23,42,0.05)]">
+        <div className="h-1 bg-gradient-to-r from-slate-900 via-indigo-600 to-indigo-400" />
+        <div className="p-6 sm:p-7">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-2.5">
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-600/20">
@@ -179,7 +181,7 @@ export function DatasetDetailClient({
             {latestVersion && (
               <a
                 href={`/api/datasets/${dataset.slug}/versions/${selectedVersion?.versionNumber ?? latestVersion.versionNumber}/download`}
-                className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition-colors"
+                className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition-all"
               >
                 <Download className="h-4 w-4" />
                 Download All (.zip)
@@ -233,6 +235,7 @@ export function DatasetDetailClient({
               </>
             )}
           </div>
+        </div>
         </div>
       </div>
 

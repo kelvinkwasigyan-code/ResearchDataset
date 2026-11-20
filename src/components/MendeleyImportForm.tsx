@@ -354,7 +354,7 @@ export function MendeleyImportForm() {
               ) : (
                 <>
                   <CloudDownload className="h-4 w-4" />
-                  Import into Just Dataset Hub ({selectedIds.size}{" "}
+                  Import into Just Research ({selectedIds.size}{" "}
                   {selectedIds.size === 1 ? "file" : "files"})
                 </>
               )}
