@@ -9,6 +9,7 @@ export interface SessionPayload {
   userId: string;
   email: string;
   name: string;
+  isAdmin?: boolean;
 }
 
 function getSecretKey(): Uint8Array {
@@ -35,6 +36,7 @@ export async function signSessionToken(payload: SessionPayload): Promise<string>
     userId: payload.userId,
     email: payload.email,
     name: payload.name,
+    isAdmin: Boolean(payload.isAdmin),
   })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -56,6 +58,7 @@ export async function verifySessionToken(
         userId: payload.userId,
         email: payload.email,
         name: payload.name,
+        isAdmin: Boolean(payload.isAdmin),
       };
     }
     return null;

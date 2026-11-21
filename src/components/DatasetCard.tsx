@@ -1,12 +1,5 @@
 import Link from "next/link";
-import {
-  ArrowUpRight,
-  Download,
-  Eye,
-  FileText,
-  HardDrive,
-  Lock,
-} from "lucide-react";
+import { Download, Eye, FileText, HardDrive, Lock } from "lucide-react";
 import { formatBytes, formatDate, parseAuthors } from "@/lib/format";
 import type { SerializedDataset } from "@/lib/serialize";
 
@@ -19,73 +12,90 @@ export function DatasetCard({ dataset }: DatasetCardProps) {
   const fileCount = latestVersion?.files.length ?? 0;
   const totalBytes = latestVersion?.totalBytes ?? 0;
   const authors = parseAuthors(dataset.authors);
+  const authorDisplay =
+    authors.length > 0
+      ? authors.join(", ")
+      : dataset.owner?.name ?? "Unknown";
 
   return (
-    <article className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/85 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_10px_25px_-10px_rgba(15,23,42,0.12)] transition-all duration-200">
-      <div>
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-700">
-              {dataset.license}
+    <article className="group rounded-xl border border-slate-200/80 bg-white p-4 sm:p-6 shadow-sm transition-all duration-200 hover:border-blue-300 hover:shadow-md hover:-translate-y-1 hover:scale-[1.005]">
+      {/* Top scholarly metadata */}
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-indigo-700">
+            Dataset
+          </span>
+          {latestVersion && (
+            <span className="font-medium text-slate-700 tabular-nums">
+              Version {latestVersion.versionNumber}
             </span>
-            {latestVersion && (
-              <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-600/15 tabular-nums">
-                v{latestVersion.versionNumber}
-              </span>
-            )}
-            {dataset.visibility === "PRIVATE" && (
-              <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20">
-                <Lock className="h-2.5 w-2.5" />
-                Private
-              </span>
-            )}
-          </div>
-          <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+          )}
+          <span className="text-slate-300">·</span>
+          <span>Published {formatDate(dataset.updatedAt)}</span>
+          {dataset.visibility === "PRIVATE" && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20">
+              <Lock className="h-3 w-3" />
+              Private
+            </span>
+          )}
+          {dataset.status === "PENDING" && (
+            <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700 ring-1 ring-inset ring-amber-600/20">
+              Pending Review
+            </span>
+          )}
+          {dataset.status === "REJECTED" && (
+            <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700 ring-1 ring-inset ring-red-600/20">
+              Rejected
+            </span>
+          )}
+          {dataset.deletionRequested && (
+            <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700 ring-1 ring-inset ring-red-600/20">
+              Deletion Requested
+            </span>
+          )}
         </div>
 
+        <span className="inline-flex items-center rounded-full border border-emerald-200/60 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-medium text-emerald-700">
+          {dataset.license}
+        </span>
+      </div>
+
+      {/* Title */}
+      <h2 className="mt-2.5">
         <Link
           href={`/datasets/${dataset.slug}`}
-          className="mt-3 block text-[17px] font-semibold leading-snug tracking-tight text-slate-950 group-hover:text-indigo-600 transition-colors line-clamp-2"
+          className="text-base sm:text-lg font-semibold leading-snug tracking-tight text-blue-600 group-hover:text-black transition-colors"
         >
           {dataset.title}
         </Link>
+      </h2>
 
-        <p className="mt-1.5 text-xs text-slate-500 truncate">
-          <span className="font-medium text-slate-700">
-            {authors.length > 0
-              ? authors.join(", ")
-              : dataset.owner?.name ?? "Unknown"}
-          </span>
-          <span className="mx-1.5 text-slate-300">·</span>
-          <span>{formatDate(dataset.updatedAt)}</span>
-        </p>
+      {/* Authors */}
+      <p className="mt-1 text-xs font-medium text-slate-600">{authorDisplay}</p>
 
-        <p className="mt-3 text-sm leading-relaxed text-slate-600 line-clamp-2">
-          {dataset.summary}
-        </p>
+      {/* Abstract / Summary */}
+      <p className="mt-2.5 text-sm leading-relaxed text-slate-600 line-clamp-2">
+        {dataset.summary}
+      </p>
 
-        {dataset.tags.length > 0 && (
-          <div className="mt-4 flex flex-wrap items-center gap-1.5">
-            {dataset.tags.slice(0, 4).map((tag) => (
-              <Link
-                key={tag}
-                href={`/?tag=${encodeURIComponent(tag)}`}
-                className="inline-flex items-center rounded-full border border-slate-200/80 bg-slate-50 px-2.5 py-0.5 text-[11px] font-medium text-slate-600 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
-              >
-                #{tag}
-              </Link>
-            ))}
-            {dataset.tags.length > 4 && (
-              <span className="text-[11px] font-medium text-slate-400">
-                +{dataset.tags.length - 4}
-              </span>
-            )}
-          </div>
-        )}
-      </div>
+      {/* Subject Chips */}
+      {dataset.tags.length > 0 && (
+        <div className="mt-3.5 flex flex-wrap items-center gap-1.5">
+          {dataset.tags.slice(0, 6).map((tag) => (
+            <Link
+              key={tag}
+              href={`/?tag=${encodeURIComponent(tag)}`}
+              className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700 capitalize hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+            >
+              {tag}
+            </Link>
+          ))}
+        </div>
+      )}
 
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3.5 text-xs text-slate-500 tabular-nums">
-        <div className="flex items-center gap-3.5">
+      {/* Bottom academic stats strip */}
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3.5 text-xs text-slate-500 tabular-nums">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <span className="inline-flex items-center gap-1.5">
             <FileText className="h-3.5 w-3.5 text-slate-400" />
             {fileCount} {fileCount === 1 ? "file" : "files"}
@@ -96,7 +106,7 @@ export function DatasetCard({ dataset }: DatasetCardProps) {
           </span>
         </div>
 
-        <div className="flex items-center gap-3.5">
+        <div className="flex items-center gap-4">
           <span className="inline-flex items-center gap-1" title="Views">
             <Eye className="h-3.5 w-3.5 text-slate-400" />
             {dataset.viewCount.toLocaleString()}

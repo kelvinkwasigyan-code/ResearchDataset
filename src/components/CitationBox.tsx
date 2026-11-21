@@ -60,9 +60,9 @@ export function CitationBox({
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200/85 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+    <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 text-sm font-semibold text-slate-950">
+        <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
           <Quote className="h-4 w-4 text-indigo-600" />
           <span>Cite Dataset</span>
         </div>
@@ -72,8 +72,8 @@ export function CitationBox({
             onClick={() => setFormat("apa")}
             className={`rounded-md px-2.5 py-1 transition-all cursor-pointer ${
               format === "apa"
-                ? "bg-white text-slate-950 shadow-2xs"
-                : "text-slate-500 hover:text-slate-900"
+                ? "bg-white text-indigo-700 shadow-xs"
+                : "text-slate-600 hover:text-slate-900"
             }`}
           >
             APA
@@ -83,8 +83,8 @@ export function CitationBox({
             onClick={() => setFormat("bibtex")}
             className={`rounded-md px-2.5 py-1 transition-all cursor-pointer ${
               format === "bibtex"
-                ? "bg-white text-slate-950 shadow-2xs"
-                : "text-slate-500 hover:text-slate-900"
+                ? "bg-white text-indigo-700 shadow-xs"
+                : "text-slate-600 hover:text-slate-900"
             }`}
           >
             BibTeX
@@ -92,14 +92,14 @@ export function CitationBox({
         </div>
       </div>
 
-      <pre className="mt-3.5 overflow-x-auto whitespace-pre-wrap rounded-xl bg-slate-950 p-3.5 font-mono text-[11px] leading-relaxed text-slate-200">
+      <pre className="mt-3.5 overflow-x-auto whitespace-pre-wrap rounded-xl border border-slate-200/80 bg-slate-50 p-3.5 font-mono text-[11px] leading-relaxed text-slate-700">
         {citationText}
       </pre>
 
       <button
         type="button"
         onClick={handleCopy}
-        className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 hover:border-slate-300 hover:bg-slate-50 transition-colors cursor-pointer"
+        className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/50 hover:text-indigo-700 transition-colors cursor-pointer"
       >
         {copied ? (
           <>

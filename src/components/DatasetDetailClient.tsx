@@ -6,15 +6,18 @@ import { useMemo, useState } from "react";
 import DOMPurify from "dompurify";
 import { marked } from "marked";
 import {
+  AlertTriangle,
+  Clock,
   Download,
   Eye,
   Globe,
   Lock,
   Pencil,
   Plus,
-  Tag,
   Trash2,
   Users,
+  X,
+  XCircle,
 } from "lucide-react";
 import { formatDate, parseAuthors } from "@/lib/format";
 import type { SerializedDataset, SerializedFile } from "@/lib/serialize";
@@ -40,6 +43,9 @@ export function DatasetDetailClient({
   );
   const [previewFile, setPreviewFile] = useState<SerializedFile | null>(null);
   const [editOpen, setEditOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deletionReason, setDeletionReason] = useState("");
+  const [deletionError, setDeletionError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const visibility = dataset.visibility;
@@ -83,23 +89,35 @@ export function DatasetDetailClient({
     }
   }
 
-  async function handleDelete() {
-    if (
-      !window.confirm(
-        `Delete "${dataset.title}" and all of its stored files? This cannot be undone.`
-      )
-    ) {
+  async function handleRequestDeletion(e: React.FormEvent) {
+    e.preventDefault();
+    setDeletionError(null);
+
+    if (deletionReason.trim().length < 10) {
+      setDeletionError(
+        "Please state a clear reason for deletion (at least 10 characters)."
+      );
       return;
     }
+
     setBusy(true);
     try {
-      const res = await fetch(`/api/datasets/${dataset.slug}`, {
-        method: "DELETE",
+      const res = await fetch(`/api/datasets/${dataset.slug}/deletion-request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason: deletionReason.trim() }),
       });
-      if (res.ok) {
-        router.push("/");
-        router.refresh();
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        setDeletionError(data?.error || "Failed to submit deletion request.");
+        return;
       }
+      if (data?.dataset) {
+        setDataset(data.dataset);
+      }
+      setDeleteModalOpen(false);
+      setDeletionReason("");
+      router.refresh();
     } finally {
       setBusy(false);
     }
@@ -107,14 +125,56 @@ export function DatasetDetailClient({
 
   return (
     <div className="space-y-6">
+      {/* Review / Deletion Status Banners */}
+      {dataset.status === "PENDING" && (
+        <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3.5 text-sm text-amber-900">
+          <Clock className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+          <div>
+            <p className="font-semibold">Pending Administrator Review</p>
+            <p className="mt-0.5 text-xs text-amber-800">
+              This dataset is currently hidden from the public catalog until an
+              administrator approves it. You will receive an email notification
+              once it is approved and published.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {dataset.status === "REJECTED" && (
+        <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-sm text-red-900">
+          <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
+          <div>
+            <p className="font-semibold">Not Approved for Publication</p>
+            {dataset.reviewNote && (
+              <p className="mt-0.5 text-xs text-red-800">
+                Reviewer feedback: {dataset.reviewNote}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {dataset.deletionRequested && (
+        <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50/70 px-4 py-3.5 text-sm text-red-900">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
+          <div>
+            <p className="font-semibold">
+              Deletion Request Submitted (Awaiting Admin Approval)
+            </p>
+            <p className="mt-0.5 text-xs text-red-800">
+              Stated reason: {dataset.deletionReason}
+            </p>
+          </div>
+        </div>
+      )}
       {/* Header Card */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200/85 bg-white shadow-[0_1px_3px_rgba(15,23,42,0.05)]">
-        <div className="h-1 bg-gradient-to-r from-slate-900 via-indigo-600 to-indigo-400" />
-        <div className="p-6 sm:p-7">
+      <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+        <div className="h-1 bg-gradient-to-r from-indigo-600 to-teal-500" />
+        <div className="p-4 sm:p-7">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-2.5">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-600/20">
+              <span className="inline-flex items-center rounded-full border border-emerald-200/60 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
                 {dataset.license}
               </span>
               {visibility === "PRIVATE" ? (
@@ -167,9 +227,8 @@ export function DatasetDetailClient({
                   <Link
                     key={tag}
                     href={`/?tag=${encodeURIComponent(tag)}`}
-                    className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                    className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700 capitalize hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
                   >
-                    <Tag className="h-3 w-3" />
                     {tag}
                   </Link>
                 ))}
@@ -181,7 +240,7 @@ export function DatasetDetailClient({
             {latestVersion && (
               <a
                 href={`/api/datasets/${dataset.slug}/versions/${selectedVersion?.versionNumber ?? latestVersion.versionNumber}/download`}
-                className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition-all"
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition-all"
               >
                 <Download className="h-4 w-4" />
                 Download All (.zip)
@@ -225,12 +284,24 @@ export function DatasetDetailClient({
                 </button>
                 <button
                   type="button"
-                  disabled={busy}
-                  onClick={handleDelete}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors cursor-pointer"
-                  title="Delete dataset"
+                  disabled={busy || dataset.deletionRequested}
+                  onClick={() => {
+                    setDeletionError(null);
+                    setDeleteModalOpen(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3.5 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors cursor-pointer"
+                  title={
+                    dataset.deletionRequested
+                      ? "Deletion request already pending"
+                      : "Request dataset deletion"
+                  }
                 >
                   <Trash2 className="h-4 w-4" />
+                  <span>
+                    {dataset.deletionRequested
+                      ? "Deletion Requested"
+                      : "Request Deletion"}
+                  </span>
                 </button>
               </>
             )}
@@ -250,7 +321,7 @@ export function DatasetDetailClient({
             onPreviewFile={setPreviewFile}
           />
 
-          <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs">
+          <section className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
             <h2 className="text-base font-semibold text-slate-900">
               Dataset Description
             </h2>
@@ -278,7 +349,7 @@ export function DatasetDetailClient({
             />
           )}
 
-          <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs space-y-3">
+          <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm space-y-3">
             <h2 className="text-sm font-semibold text-slate-900">
               Repository Metadata
             </h2>
@@ -328,6 +399,76 @@ export function DatasetDetailClient({
           router.refresh();
         }}
       />
+
+      {/* Request Deletion Modal */}
+      {deleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs">
+          <div className="w-full max-w-md rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xl">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h2 className="text-base font-bold text-slate-900">
+                  Request Dataset Deletion
+                </h2>
+                <p className="mt-1 text-xs text-slate-500">
+                  To preserve research integrity, datasets cannot be deleted
+                  directly. State your reason below for administrator review.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDeleteModalOpen(false)}
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleRequestDeletion} className="mt-4 space-y-4">
+              {deletionError && (
+                <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+                  {deletionError}
+                </div>
+              )}
+
+              <div>
+                <label
+                  htmlFor="deletion-reason"
+                  className="block text-xs font-semibold text-slate-700"
+                >
+                  Reason for deletion <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  id="deletion-reason"
+                  rows={4}
+                  required
+                  minLength={10}
+                  value={deletionReason}
+                  onChange={(e) => setDeletionReason(e.target.value)}
+                  placeholder="e.g., Dataset contains accidental sensitive participant identifiers / superseded by a corrected study..."
+                  className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setDeleteModalOpen(false)}
+                  className="rounded-lg border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={busy}
+                  className="rounded-lg bg-red-600 px-4 py-2 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50 cursor-pointer"
+                >
+                  {busy ? "Submitting..." : "Submit Deletion Request"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

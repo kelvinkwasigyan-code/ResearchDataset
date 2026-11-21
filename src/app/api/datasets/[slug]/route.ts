@@ -27,7 +27,13 @@ export async function GET(
     return NextResponse.json({ error: "Dataset not found" }, { status: 404 });
   }
 
-  if (dataset.visibility !== "PUBLIC" && session?.userId !== dataset.ownerId) {
+  const isPublicApproved =
+    dataset.visibility === "PUBLIC" && dataset.status === "APPROVED";
+  if (
+    !isPublicApproved &&
+    session?.userId !== dataset.ownerId &&
+    !session?.isAdmin
+  ) {
     return NextResponse.json({ error: "Dataset not found" }, { status: 404 });
   }
 
@@ -162,6 +168,16 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  if (!session.isAdmin) {
+    return NextResponse.json(
+      {
+        error:
+          "Direct deletion is disabled. Please submit a deletion request with a reason for administrator review.",
+      },
+      { status: 403 }
+    );
+  }
+
   const existing = await prisma.dataset.findUnique({
     where: { slug },
     include: {
@@ -173,9 +189,6 @@ export async function DELETE(
 
   if (!existing) {
     return NextResponse.json({ error: "Dataset not found" }, { status: 404 });
-  }
-  if (existing.ownerId !== session.userId) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const keysToDelete = existing.versions.flatMap((v) =>

@@ -103,7 +103,13 @@ export async function GET(
   }
 
   const dataset = file.version.dataset;
-  if (dataset.visibility !== "PUBLIC" && session?.userId !== dataset.ownerId) {
+  const isPublicApproved =
+    dataset.visibility === "PUBLIC" && dataset.status === "APPROVED";
+  if (
+    !isPublicApproved &&
+    session?.userId !== dataset.ownerId &&
+    !session?.isAdmin
+  ) {
     return NextResponse.json({ error: "File not found" }, { status: 404 });
   }
 

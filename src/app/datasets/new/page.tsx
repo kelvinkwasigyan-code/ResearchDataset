@@ -108,30 +108,30 @@ export default function NewDatasetPage() {
         </p>
 
         {/* Mode Tabs */}
-        <div className="mt-5 inline-flex rounded-xl border border-slate-200/90 bg-white p-1 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+        <div className="mt-5 grid w-full grid-cols-2 sm:inline-flex sm:w-auto rounded-xl border border-slate-200/80 bg-white p-1 shadow-sm">
           <button
             type="button"
             onClick={() => setMode("upload")}
-            className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all cursor-pointer ${
+            className={`inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 sm:px-4 text-xs sm:text-sm font-medium transition-all cursor-pointer ${
               mode === "upload"
-                ? "bg-slate-950 text-white shadow-xs"
-                : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
+                ? "bg-indigo-600 text-white shadow-xs"
+                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
             }`}
           >
-            <Upload className="h-4 w-4" />
-            Upload Files
+            <Upload className="h-4 w-4 shrink-0" />
+            <span>Upload Files</span>
           </button>
           <button
             type="button"
             onClick={() => setMode("mendeley")}
-            className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all cursor-pointer ${
+            className={`inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 sm:px-4 text-xs sm:text-sm font-medium transition-all cursor-pointer ${
               mode === "mendeley"
-                ? "bg-slate-950 text-white shadow-xs"
-                : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
+                ? "bg-indigo-600 text-white shadow-xs"
+                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
             }`}
           >
-            <CloudDownload className="h-4 w-4" />
-            Import from Mendeley
+            <CloudDownload className="h-4 w-4 shrink-0" />
+            <span>Import Mendeley</span>
           </button>
         </div>
       </div>
@@ -141,7 +141,7 @@ export default function NewDatasetPage() {
       ) : (
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-xs sm:p-8"
+        className="space-y-6 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8"
       >
         {error && (
           <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 p-3.5 text-sm text-red-700">
@@ -356,7 +356,7 @@ export default function NewDatasetPage() {
           <button
             type="submit"
             disabled={uploading}
-            className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 disabled:opacity-50 transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50 transition-all cursor-pointer"
           >
             {uploading ? (
               <>

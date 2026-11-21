@@ -7,6 +7,7 @@ import {
   hashPassword,
   verifyPassword,
 } from "@/lib/auth";
+import { ORCID_REGEX } from "@/lib/research-data";
 
 export async function GET(
   _req: NextRequest,
@@ -17,7 +18,26 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
   const session = await getSession();
-  return NextResponse.json({ user: session });
+  if (!session) {
+    return NextResponse.json({ user: null });
+  }
+
+  const profile = await prisma.user.findUnique({
+    where: { id: session.userId },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      isAdmin: true,
+      institution: true,
+      role: true,
+      country: true,
+      department: true,
+      orcid: true,
+    },
+  });
+
+  return NextResponse.json({ user: profile ?? session });
 }
 
 export async function POST(
@@ -31,7 +51,16 @@ export async function POST(
     return NextResponse.json({ ok: true });
   }
 
-  let body: { email?: string; password?: string; name?: string };
+  let body: {
+    email?: string;
+    password?: string;
+    name?: string;
+    institution?: string;
+    role?: string;
+    country?: string;
+    department?: string;
+    orcid?: string;
+  };
   try {
     body = await req.json();
   } catch {
@@ -43,11 +72,38 @@ export async function POST(
 
   if (action === "register") {
     const name = (body.name ?? "").trim();
+    const institution = (body.institution ?? "").trim();
+    const role = (body.role ?? "").trim();
+    const country = (body.country ?? "").trim();
+    const department = (body.department ?? "").trim() || null;
+    const orcidRaw = (body.orcid ?? "").trim().toUpperCase();
+    const orcid = orcidRaw || null;
+
     if (!name || !email || password.length < 6) {
       return NextResponse.json(
         {
           error:
-            "Name, a valid email, and a password of at least 6 characters are required.",
+            "Official full name, a valid email, and a password of at least 6 characters are required.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (!institution || !role || !country) {
+      return NextResponse.json(
+        {
+          error:
+            "Affiliated institution, academic/research role, and country are required.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (orcid && !ORCID_REGEX.test(orcid)) {
+      return NextResponse.json(
+        {
+          error:
+            "Invalid ORCID iD format. Use 0000-0000-0000-0000 (or leave blank).",
         },
         { status: 400 }
       );
@@ -63,17 +119,39 @@ export async function POST(
 
     const passwordHash = await hashPassword(password);
     const user = await prisma.user.create({
-      data: { email, name, passwordHash },
+      data: {
+        email,
+        name,
+        passwordHash,
+        institution,
+        role,
+        country,
+        department,
+        orcid,
+      },
     });
 
     await createSession({
       userId: user.id,
       email: user.email,
       name: user.name,
+      isAdmin: user.isAdmin,
     });
 
     return NextResponse.json(
-      { user: { id: user.id, email: user.email, name: user.name } },
+      {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          isAdmin: user.isAdmin,
+          institution: user.institution,
+          role: user.role,
+          country: user.country,
+          department: user.department,
+          orcid: user.orcid,
+        },
+      },
       { status: 201 }
     );
   }
@@ -106,10 +184,19 @@ export async function POST(
       userId: user.id,
       email: user.email,
       name: user.name,
+      isAdmin: user.isAdmin,
     });
 
     return NextResponse.json({
-      user: { id: user.id, email: user.email, name: user.name },
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        isAdmin: user.isAdmin,
+        institution: user.institution,
+        role: user.role,
+        country: user.country,
+      },
     });
   }
 

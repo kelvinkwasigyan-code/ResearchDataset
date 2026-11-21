@@ -20,14 +20,20 @@ export default async function DatasetDetailPage({
 
   const existing = await prisma.dataset.findUnique({
     where: { slug },
-    select: { id: true, visibility: true, ownerId: true },
+    select: { id: true, visibility: true, status: true, ownerId: true },
   });
 
   if (!existing) {
     notFound();
   }
 
-  if (existing.visibility !== "PUBLIC" && session?.userId !== existing.ownerId) {
+  const isPublicApproved =
+    existing.visibility === "PUBLIC" && existing.status === "APPROVED";
+  if (
+    !isPublicApproved &&
+    session?.userId !== existing.ownerId &&
+    !session?.isAdmin
+  ) {
     notFound();
   }
 

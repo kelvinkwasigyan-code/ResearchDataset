@@ -28,9 +28,13 @@ export async function GET(req: NextRequest) {
   if (mine && session) {
     where.ownerId = session.userId;
   } else if (session) {
-    where.OR = [{ visibility: "PUBLIC" }, { ownerId: session.userId }];
+    where.OR = [
+      { visibility: "PUBLIC", status: "APPROVED" },
+      { ownerId: session.userId },
+    ];
   } else {
     where.visibility = "PUBLIC";
+    where.status = "APPROVED";
   }
 
   const andConditions: Prisma.DatasetWhereInput[] = [];
@@ -234,6 +238,8 @@ export async function POST(req: NextRequest) {
         authors,
         license,
         visibility,
+        status: session.isAdmin ? "APPROVED" : "PENDING",
+        reviewedAt: session.isAdmin ? new Date() : null,
         ownerId: session.userId,
         tags: {
           create: tagNames.map((name) => ({

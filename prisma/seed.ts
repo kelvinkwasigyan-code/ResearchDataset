@@ -123,14 +123,40 @@ async function storeFilesForVersion(
 async function main() {
   console.log("Seeding Just Research...");
 
+  const adminPasswordHash = await bcrypt.hash("admin123", 10);
+  await prisma.user.upsert({
+    where: { email: "admin@justresearch.local" },
+    update: { isAdmin: true },
+    create: {
+      email: "admin@justresearch.local",
+      name: "Just Research Admin",
+      passwordHash: adminPasswordHash,
+      isAdmin: true,
+      institution: "Just Research Editorial Board",
+      role: "Data Steward / Academic Librarian",
+      country: "Ghana",
+    },
+  });
+
   const passwordHash = await bcrypt.hash("password123", 10);
   const demoUser = await prisma.user.upsert({
     where: { email: "demo@datasethub.local" },
-    update: {},
+    update: {
+      institution: "ETH Zurich",
+      role: "Research Scientist / Fellow",
+      country: "Switzerland",
+      department: "Environmental & Data Sciences",
+      orcid: "0000-0002-1825-0097",
+    },
     create: {
       email: "demo@datasethub.local",
       name: "Dr. Elena Vance",
       passwordHash,
+      institution: "ETH Zurich",
+      role: "Research Scientist / Fellow",
+      country: "Switzerland",
+      department: "Environmental & Data Sciences",
+      orcid: "0000-0002-1825-0097",
     },
   });
 

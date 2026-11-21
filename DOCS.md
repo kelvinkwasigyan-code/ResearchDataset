@@ -10,6 +10,7 @@
 **Just Research** is a full-stack web application modeled after research dataset repositories (like Zenodo / Mendeley Data / Kaggle Datasets), designed to run locally with zero external cloud dependencies while keeping clean abstractions (Prisma + `StorageProvider`) for future cloud migration.
 
 ### Core Capabilities
+
 - **Dataset Publishing & Versioning:** Users upload multi-file datasets as immutable versions (`v1`, `v2`, …) with release changelogs, Markdown descriptions, authors, tags, license selection, and `PUBLIC` / `PRIVATE` visibility.
 - **Integrity & Streaming Downloads:** Every uploaded file is hashed with **SHA-256** on write. Users can download individual files or stream an entire dataset version as a dynamically generated **ZIP archive** (`archiver`).
 - **In-Browser File Previews:** Safe inline previews for **CSV** (first 100 rows parsed via `papaparse`), **JSON** (pretty-printed), **Markdown** (sanitized via `marked` + `dompurify`), plain text/code/config files (capped at 256 KB), and raster images (`png`, `jpg`, `jpeg`, `webp`, `gif`). Active documents (`html`, `htm`, `svg`) are explicitly blocked from inline rendering.
@@ -33,6 +34,7 @@
 | Preview / Parsing | **papaparse**, **marked**, **dompurify** | CSV parsing + sanitized Markdown rendering |
 
 ### Next.js Config (`next.config.ts`)
+
 - `serverExternalPackages: ["archiver"]` ensures Node-native zip streaming works cleanly in Route Handlers.
 - `turbopack.rules` configures `@tailwindcss/turbopack` for `*.css`.
 
@@ -107,6 +109,7 @@ dataset-hub/
 Provider: **SQLite** (`DATABASE_URL` in `.env`).
 
 ### Models
+
 1. **`User`**
    - `id` (`cuid`), `email` (`unique`), `name`, `passwordHash`, `createdAt`
    - Relation: `datasets` (`Dataset[]`)
@@ -132,6 +135,7 @@ Provider: **SQLite** (`DATABASE_URL` in `.env`).
 ## 5. Storage Architecture (`src/lib/storage/`)
 
 File storage is abstracted behind `StorageProvider` (`src/lib/storage/types.ts`):
+
 ```ts
 export interface StoredObject {
   storageKey: string;
@@ -147,6 +151,7 @@ export interface StorageProvider {
 ```
 
 ### Default Implementation: `LocalStorageProvider` (`src/lib/storage/local.ts`)
+
 - Base directory: `<repo>/storage` (gitignored).
 - Key format built by `buildStorageKey(datasetId, versionNumber, fileId, originalName)`:
   `datasets/<datasetId>/v<versionNumber>/<fileId>-<sanitizedName>`
@@ -175,6 +180,7 @@ export interface StorageProvider {
 All routes live under `src/app/api/`.
 
 ### Auth (`/api/auth/[action]`)
+
 | Method | Endpoint | Auth | Description |
 | --- | --- | --- | --- |
 | `GET` | `/api/auth/me` | Optional | Returns `{ user: SessionPayload \| null }`. |
@@ -183,6 +189,7 @@ All routes live under `src/app/api/`.
 | `POST` | `/api/auth/logout` | Any | Clears session cookie (`200`). |
 
 ### Datasets (`/api/datasets` & `/api/datasets/[slug]`)
+
 | Method | Endpoint | Auth | Description |
 | --- | --- | --- | --- |
 | `GET` | `/api/datasets` | Optional | Query params: `q`, `tag`, `ext`, `license`, `sort` (`newest` \| `downloads` \| `views`), `mine` (`true`), `page` (default `1`), `pageSize` (default `12`, max `50`). Returns `{ datasets, pagination }`. |
@@ -192,6 +199,7 @@ All routes live under `src/app/api/`.
 | `DELETE` | `/api/datasets/[slug]` | Owner | Deletes dataset (cascades versions/files in DB) and deletes all underlying stored files from disk. |
 
 ### Versions & Downloads
+
 | Method | Endpoint | Auth | Description |
 | --- | --- | --- | --- |
 | `POST` | `/api/datasets/[slug]/versions` | Owner | `multipart/form-data`: `changelog`, `files`* (1+ files). Creates immutable `v(latest + 1)` (`201`). |
@@ -202,6 +210,7 @@ All routes live under `src/app/api/`.
 *\*Optional for `PUBLIC` datasets; Owner required for `PRIVATE` datasets.*
 
 ### Mendeley Data Import (`/api/datasets/import/mendeley`)
+
 | Method | Endpoint | Auth | Description |
 | --- | --- | --- | --- |
 | `GET` | `/api/datasets/import/mendeley?source=<url\|doi\|id>` | Required | Fetches metadata & file list from Mendeley's public API (`data.mendeley.com/public-api/datasets/...`) and returns `{ preview, limits }`. |
@@ -224,12 +233,14 @@ All routes live under `src/app/api/`.
 ## 9. Local Setup & Commands
 
 ### Environment Variables (`.env`)
+
 ```env
 DATABASE_URL="file:./dev.db"
 AUTH_SECRET="replace-with-a-long-random-secret-at-least-16-chars"
 ```
 
 ### First-Time Setup
+
 ```bash
 npm install
 npx prisma migrate dev
@@ -238,11 +249,13 @@ npm run dev
 ```
 
 ### Demo Credentials (created by `prisma/seed.ts`)
+
 - **Email:** `demo@datasethub.local`
 - **Password:** `password123`
 - Seeds 3 public datasets: *Global Urban Air Quality Measurements (v1 & v2)*, *Open NLP Sentiment Benchmark Corpus (v1)*, and *Synthetic Microscopy Cell Atlas (v1, includes generated PNG)*.
 
 ### NPM Scripts
+
 - `npm run dev` — Start Next.js dev server (Turbopack) at `http://localhost:3000`.
 - `npm run build` — Production build.
 - `npm run start` — Start production server.

@@ -110,30 +110,30 @@ export function FilePreviewModal({ file, onClose }: FilePreviewModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-2 sm:p-4 backdrop-blur-xs"
       onClick={onClose}
     >
       <div
-        className="flex max-h-[88vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200"
+        className="flex max-h-[92vh] sm:max-h-[88vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between gap-4 border-b border-slate-200 px-6 py-4">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
-              <FileText className="h-5 w-5" />
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-6 sm:py-4">
+          <div className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3">
+            <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+              <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
             <div className="min-w-0">
-              <h3 className="truncate text-base font-semibold text-slate-900">
+              <h3 className="truncate text-sm sm:text-base font-semibold text-slate-900">
                 {file.originalName}
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="truncate text-[11px] sm:text-xs text-slate-500">
                 {formatBytes(file.sizeBytes)} · {file.mimeType}
               </p>
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             {payload &&
               (payload.type === "json" ||
                 payload.type === "text" ||

@@ -37,10 +37,21 @@ export interface SerializedDataset {
   authors: string;
   license: string;
   visibility: string;
+  status: string;
+  reviewNote: string | null;
+  reviewedAt: string | null;
+  deletionRequested: boolean;
+  deletionReason: string | null;
+  deletionRequestedAt: string | null;
   viewCount: number;
   downloadCount: number;
   ownerId: string;
-  owner?: { id: string; name: string; email?: string };
+  owner?: {
+    id: string;
+    name: string;
+    email?: string;
+    institution?: string | null;
+  };
   tags: string[];
   versions: SerializedVersion[];
   createdAt: string;
@@ -48,7 +59,10 @@ export interface SerializedDataset {
 }
 
 type FullDataset = Dataset & {
-  owner?: Pick<User, "id" | "name">;
+  owner?: Pick<User, "id" | "name"> & {
+    email?: string;
+    institution?: string | null;
+  };
   tags?: (DatasetTag & { tag: Tag })[];
   versions?: (DatasetVersion & { files?: DatasetFile[] })[];
 };
@@ -63,11 +77,26 @@ export function serializeDataset(dataset: FullDataset): SerializedDataset {
     authors: dataset.authors,
     license: dataset.license,
     visibility: dataset.visibility,
+    status: dataset.status,
+    reviewNote: dataset.reviewNote ?? null,
+    reviewedAt: dataset.reviewedAt ? dataset.reviewedAt.toISOString() : null,
+    deletionRequested: dataset.deletionRequested,
+    deletionReason: dataset.deletionReason ?? null,
+    deletionRequestedAt: dataset.deletionRequestedAt
+      ? dataset.deletionRequestedAt.toISOString()
+      : null,
     viewCount: dataset.viewCount,
     downloadCount: dataset.downloadCount,
     ownerId: dataset.ownerId,
     owner: dataset.owner
-      ? { id: dataset.owner.id, name: dataset.owner.name }
+      ? {
+          id: dataset.owner.id,
+          name: dataset.owner.name,
+          ...(dataset.owner.email ? { email: dataset.owner.email } : {}),
+          ...(dataset.owner.institution !== undefined
+            ? { institution: dataset.owner.institution }
+            : {}),
+        }
       : undefined,
     tags: dataset.tags ? dataset.tags.map((t) => t.tag.name) : [],
     versions: (dataset.versions ?? [])

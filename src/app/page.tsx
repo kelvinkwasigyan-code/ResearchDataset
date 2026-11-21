@@ -38,9 +38,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   if (mine && session) {
     where.ownerId = session.userId;
   } else if (session) {
-    where.OR = [{ visibility: "PUBLIC" }, { ownerId: session.userId }];
+    where.OR = [
+      { visibility: "PUBLIC", status: "APPROVED" },
+      { ownerId: session.userId },
+    ];
   } else {
     where.visibility = "PUBLIC";
+    where.status = "APPROVED";
   }
 
   const andConditions: Prisma.DatasetWhereInput[] = [];
@@ -133,37 +137,40 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   return (
     <div>
-      {/* Full-bleed architectural hero band */}
-      <section className="relative overflow-hidden border-b border-slate-200/80 bg-white">
-        <div className="bg-grid-pattern pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,white,transparent)]" />
-        <div className="pointer-events-none absolute -top-24 right-1/4 h-72 w-72 rounded-full bg-indigo-100/50 blur-3xl" />
-
-        <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      {/* Hero band with darkened research desk photo & crisp white typography */}
+      <section className="relative overflow-hidden border-b border-slate-200/80 bg-slate-900">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-cover bg-center brightness-90"
+          style={{ backgroundImage: "url('/images/hero-research.jpg')" }}
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-slate-950/75 via-slate-900/65 to-indigo-950/55"
+        />
+        <div className="relative mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-12 lg:px-8">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-3 py-1 text-xs font-medium text-slate-600 shadow-2xs">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                Just Research · Open Data Repository
-              </div>
-              <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-                {mine ? "My Research Datasets" : "Discover & Version Research Data"}
+              <h1 className="text-2xl font-bold tracking-tight text-white drop-shadow-xs sm:text-4xl">
+                {mine ? "My Research Datasets" : "Discover Research Data"}
               </h1>
-              <p className="mt-2.5 text-sm leading-relaxed text-slate-600 sm:text-[15px]">
-                Immutable dataset releases with SHA-256 integrity checks, instant
-                in-browser previews for CSV, JSON, Markdown &amp; imagery, and
-                one-click APA / BibTeX citations.
+              <p className="mt-2 text-sm leading-relaxed text-slate-100/95 sm:mt-2.5 sm:text-[15px]">
+                Just Research is an open academic repository for finding,
+                publishing, and sharing verified research datasets. It helps
+                students, researchers, and institutions preserve their data and
+                cite it with confidence.
               </p>
-              <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-slate-500">
-                <span className="inline-flex items-center gap-1.5">
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+              <div className="mt-3.5 flex flex-wrap items-center gap-1.5 sm:mt-4 sm:gap-2 text-[11px] sm:text-xs font-medium text-white">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/15 px-2.5 py-1 sm:px-3 backdrop-blur-sm">
+                  <ShieldCheck className="h-3.5 w-3.5 text-teal-300" />
                   SHA-256 Verified
                 </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <Layers className="h-3.5 w-3.5 text-indigo-600" />
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/15 px-2.5 py-1 sm:px-3 backdrop-blur-sm">
+                  <Layers className="h-3.5 w-3.5 text-indigo-300" />
                   Immutable Versioning
                 </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-slate-700" />
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/15 px-2.5 py-1 sm:px-3 backdrop-blur-sm">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />
                   Mendeley Data Import
                 </span>
               </div>
@@ -172,7 +179,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             <div className="flex items-center gap-3 shrink-0">
               <Link
                 href={session ? "/datasets/new" : "/auth/login"}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition-all"
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition-all"
               >
                 <Plus className="h-4 w-4" />
                 Publish Dataset
@@ -180,16 +187,16 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </div>
           </div>
 
-          <div className="mt-7">
+          <div className="mt-5 sm:mt-7">
             <SearchBarAndSort initialQuery={q} initialSort={sort} />
           </div>
         </div>
       </section>
 
       {/* Main Content Grid */}
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
-          <div className="lg:col-span-1">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-[240px_1fr]">
+          <div>
             <SearchFilters
               availableTags={availableTags}
               initialTag={tag}
@@ -199,42 +206,42 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             />
           </div>
 
-          <div className="lg:col-span-3">
-            <div className="mb-5 flex items-center justify-between border-b border-slate-200/70 pb-3.5 text-sm text-slate-600">
+          <div className="min-w-0">
+            <div className="mb-4 flex items-center justify-between text-sm text-slate-600">
               <span className="tabular-nums">
                 Showing{" "}
-                <span className="font-semibold text-slate-950">
+                <span className="font-semibold text-slate-900">
                   {datasets.length}
                 </span>{" "}
                 of{" "}
-                <span className="font-semibold text-slate-950">{total}</span>{" "}
+                <span className="font-semibold text-slate-900">{total}</span>{" "}
                 {total === 1 ? "dataset" : "datasets"}
               </span>
               {(q || tag || ext || license || mine) && (
                 <Link
                   href="/"
-                  className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+                  className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 hover:underline transition-colors"
                 >
-                  Clear all filters
+                  Clear filters
                 </Link>
               )}
             </div>
 
             {datasets.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-700">
+              <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center shadow-sm">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
                   <Database className="h-6 w-6" />
                 </div>
-                <h2 className="mt-4 text-base font-semibold text-slate-950">
+                <h2 className="mt-4 text-base font-semibold text-slate-900">
                   No matching datasets
                 </h2>
-                <p className="mt-1 max-w-sm text-sm text-slate-500">
+                <p className="mt-1 max-w-sm text-sm text-slate-600">
                   Try broadening your search or clearing active filters, or
                   publish a new dataset to the repository.
                 </p>
                 <Link
                   href={session ? "/datasets/new" : "/auth/register"}
-                  className="mt-5 inline-flex items-center gap-1.5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-800 transition-colors"
+                  className="mt-5 inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 transition-colors"
                 >
                   <Plus className="h-4 w-4" />
                   Publish Dataset
@@ -242,7 +249,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="space-y-3.5">
                   {datasets.map((dataset) => (
                     <DatasetCard key={dataset.id} dataset={dataset} />
                   ))}

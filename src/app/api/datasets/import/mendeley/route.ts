@@ -259,6 +259,8 @@ export async function POST(req: NextRequest) {
         authors: info.authors || session.name,
         license: info.license,
         visibility,
+        status: session.isAdmin ? "APPROVED" : "PENDING",
+        reviewedAt: session.isAdmin ? new Date() : null,
         ownerId: session.userId,
         tags: {
           create: tagNames.map((name) => ({

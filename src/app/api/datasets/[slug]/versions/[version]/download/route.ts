@@ -34,7 +34,13 @@ export async function GET(
     return NextResponse.json({ error: "Dataset not found" }, { status: 404 });
   }
 
-  if (dataset.visibility !== "PUBLIC" && session?.userId !== dataset.ownerId) {
+  const isPublicApproved =
+    dataset.visibility === "PUBLIC" && dataset.status === "APPROVED";
+  if (
+    !isPublicApproved &&
+    session?.userId !== dataset.ownerId &&
+    !session?.isAdmin
+  ) {
     return NextResponse.json({ error: "Dataset not found" }, { status: 404 });
   }
 
