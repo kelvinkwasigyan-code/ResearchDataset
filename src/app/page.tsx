@@ -141,20 +141,20 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       <section className="relative overflow-hidden border-b border-slate-200/80 bg-slate-900">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-cover bg-center brightness-90"
+          className="pointer-events-none absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: "url('/images/hero-research.jpg')" }}
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-slate-950/75 via-slate-900/65 to-indigo-950/55"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-slate-950/55 via-slate-900/45 to-slate-900/35"
         />
         <div className="relative mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-12 lg:px-8">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
-              <h1 className="text-2xl font-bold tracking-tight text-white drop-shadow-xs sm:text-4xl">
+              <h1 className="text-2xl font-bold tracking-tight text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.55)] sm:text-4xl">
                 {mine ? "My Research Datasets" : "Discover Research Data"}
               </h1>
-              <p className="mt-2 text-sm leading-relaxed text-slate-100/95 sm:mt-2.5 sm:text-[15px]">
+              <p className="mt-2 text-sm leading-relaxed text-white/95 drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)] sm:mt-2.5 sm:text-[15px]">
                 Just Research is an open academic repository for finding,
                 publishing, and sharing verified research datasets. It helps
                 students, researchers, and institutions preserve their data and

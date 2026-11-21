@@ -153,20 +153,12 @@ export function Navbar({ user }: NavbarProps) {
             </>
           ) : (
             !menuOpen && (
-              <>
-                <Link
-                  href="/auth/login"
-                  className="hidden sm:inline-flex rounded-lg px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition-colors"
-                >
-                  Sign in
-                </Link>
-                <Link
-                  href="/auth/register"
-                  className="hidden sm:inline-flex rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 transition-all"
-                >
-                  Get started
-                </Link>
-              </>
+              <Link
+                href="/auth/login"
+                className="hidden sm:inline-flex rounded-lg px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition-colors"
+              >
+                Sign in
+              </Link>
             )
           )}
 
@@ -294,13 +286,6 @@ export function Navbar({ user }: NavbarProps) {
                   className="rounded-lg border border-amber-300/70 bg-white/85 px-4 py-2 text-center text-xs font-semibold text-slate-700 hover:bg-white transition-colors"
                 >
                   Sign in
-                </Link>
-                <Link
-                  href="/auth/register"
-                  onClick={() => setMenuOpen(false)}
-                  className="rounded-lg bg-indigo-600 px-4 py-2 text-center text-xs font-semibold text-white shadow-xs hover:bg-indigo-700 transition-colors"
-                >
-                  Get started
                 </Link>
               </div>
             )}
